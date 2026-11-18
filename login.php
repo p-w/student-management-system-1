@@ -6,11 +6,18 @@ $pwd = md5($pass);
 
 require_once('./config/database.php');
 
-$com1 = "SELECT sid FROM user_student WHERE sid='$user' AND pwd='$pwd'";
-$com2 = "SELECT adminID FROM user_admin WHERE adminID='$user' AND pwd='$pwd'";
+$com1 = "SELECT sid FROM user_student WHERE sid=? AND pwd=?";
+$com2 = "SELECT adminID FROM user_admin WHERE adminID=? AND pwd=?";
 
-$result1=mysqli_query($db,$com1);
-$result2=mysqli_query($db,$com2);
+$stmt1 = mysqli_prepare($db, $com1);
+mysqli_stmt_bind_param($stmt1, "ss", $user, $pwd);
+mysqli_stmt_execute($stmt1);
+$result1 = mysqli_stmt_get_result($stmt1);
+
+$stmt2 = mysqli_prepare($db, $com2);
+mysqli_stmt_bind_param($stmt2, "ss", $user, $pwd);
+mysqli_stmt_execute($stmt2);
+$result2 = mysqli_stmt_get_result($stmt2);
 
 if($result1->num_rows>0){
     $_SESSION["login"]=true;
